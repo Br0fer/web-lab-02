@@ -1,13 +1,14 @@
+import Section from "./Section.jsx";
+
 function Addit() {
   return (
-    <section id="additional">
-      <h2>Додаткова інформація</h2>
-      <p>
+    <Section id="additional" cmd="cat" arg={`"Додаткова інформація"`} title="Додаткова інформація">
+      <p className="max-w-[72ch] leading-relaxed text-term">
         Наявність закордонного паспорту, 4 роки навчання програмування. Швидко
         навчаюсь, маю аналітичний склад розуму та готовий до швидкого засвоєння
         нових інструментів.
       </p>
-    </section>
+    </Section>
   );
 }
 

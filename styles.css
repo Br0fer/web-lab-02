@@ -1,0 +1,987 @@
+/* =========================================================
+   Резюме — Шаповалов Тарас
+   Лабораторна робота №3, частина 1: зовнішня таблиця стилів.
+   Світ: бюлетень безпеки (security advisory).
+
+   Зміст файлу:
+     1. Токени (кольори, шрифти, розміри)
+     2. Скидання та блокова модель
+     3. Базові стилі тегів
+     4. Шапка (masthead): ім'я, метадані, стек
+     5. Зміст (sticky-навігація)
+     6. Аркуш і рядки розділів (Grid)
+     7. Вміст розділів
+     8. Підвал і контакти
+     9. Стани взаємодії та поверхні браузера
+    10. Адаптивність (медіазапити)
+   ========================================================= */
+
+
+/* ---------- 1. Токени ---------- */
+
+:root {
+    --paper: #edf1ec;
+    --sheet: #ffffff;
+    --ink: #15201a;
+    --ink-2: #4b5a51;
+    --rule: #d2dbd4;
+    --accent: #1f5135;
+    --accent-2: #3e7b54;
+    --brass: #b08a3e;
+    --accent-ink: #153a26;
+    --accent-wash: #e2ede5;
+
+    --mast: #10261a;
+    --mast-ink: #eef4ef;
+    --mast-ink-2: #a9bfb0;
+    --mast-rule: rgba(238, 244, 239, 0.18);
+
+    --font-text: "Golos Text", "Segoe UI", system-ui, sans-serif;
+    --font-data: "JetBrains Mono", ui-monospace, Consolas, monospace;
+    --font-script: "Great Vibes", "Segoe Script", cursive;
+
+    --leaf: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1 11C1 5 5 1 11 1c0 6-4 10-10 10z'/%3E%3C/svg%3E");
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .12 0 0 0 0 .32 0 0 0 0 .2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+    --wrap: 72rem;
+    --gutter: clamp(1rem, 4vw, 2.5rem);
+    --label-col: 14rem;
+    --toc-h: 3.25rem;
+
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-grow: cubic-bezier(0.34, 1.45, 0.64, 1);
+}
+
+
+/* ---------- 2. Скидання та блокова модель ---------- */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-padding-top: calc(var(--toc-h) + 1rem);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+
+/* ---------- 3. Базові стилі тегів ---------- */
+
+body {
+    margin: 0;
+    background: var(--grain), var(--paper);
+    color: var(--ink);
+    font-family: var(--font-text);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    line-height: 1.2;
+    text-wrap: balance;
+}
+
+p {
+    margin: 0;
+    text-wrap: pretty;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+dl,
+dd {
+    margin: 0;
+}
+
+address {
+    font-style: normal;
+}
+
+strong {
+    font-weight: 600;
+}
+
+time {
+    font-variant-numeric: tabular-nums;
+}
+
+a {
+    color: var(--accent);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    transition: color 150ms ease, text-decoration-color 150ms ease;
+}
+
+
+/* ---------- 4. Шапка ---------- */
+
+.masthead {
+    position: relative;
+    overflow: hidden;
+    background: var(--mast);
+    color: var(--mast-ink);
+    border-bottom: 1px solid #000;
+}
+
+/* Ботанічна гравюра: декоративна папороть за вмістом шапки */
+.masthead__fern {
+    position: absolute;
+    right: max(-8rem, calc((100% - var(--wrap)) / 2 - 15rem));
+    bottom: -5rem;
+    width: auto;
+    height: 135%;
+    color: #6f9a7d;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.masthead__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "identity meta"
+        "stack    stack";
+    gap: 2.5rem 4rem;
+    max-width: var(--wrap);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4.5rem) var(--gutter) 2rem;
+}
+
+.identity {
+    grid-area: identity;
+    align-self: end;
+}
+
+h1 {
+    font-size: clamp(2.5rem, 4.5vw + 1rem, 4.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+}
+
+.identity__role {
+    margin-top: 0.9rem;
+    color: var(--mast-ink-2);
+    font-size: 1.125rem;
+}
+
+/* Метадані: пари «ключ — значення» як у бюлетені */
+.meta {
+    grid-area: meta;
+    align-self: end;
+}
+
+.meta dl {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 0;
+    border-top: 1px solid var(--mast-rule);
+}
+
+.meta dl > div {
+    display: contents;
+}
+
+.meta dt,
+.meta dd {
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--mast-rule);
+}
+
+.meta dt {
+    padding-right: 1.5rem;
+    color: var(--mast-ink-2);
+    font-size: 0.875rem;
+}
+
+.meta dd {
+    font-size: 0.9375rem;
+}
+
+.masthead a {
+    color: var(--mast-ink);
+    text-decoration-color: rgba(238, 244, 239, 0.35);
+}
+
+.tlp {
+    display: inline-block;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: #000;
+    color: #fff;
+    font-family: var(--font-data);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+/* Стек: навички на перший погляд */
+.stack {
+    grid-area: stack;
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--mast-rule);
+}
+
+.stack__title {
+    flex: none;
+    color: var(--mast-ink-2);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.stack ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.stack li {
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--mast-rule);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* Селектор атрибута: напрям «безпека» виділено як головний профіль */
+.stack li[data-group="sec"] {
+    border-color: #7fb08f;
+    background: var(--accent-2);
+    color: #fff;
+}
+
+
+/* ---------- 5. Зміст ---------- */
+
+.toc {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule);
+}
+
+.toc ul {
+    display: flex;
+    gap: 1.75rem;
+    max-width: var(--wrap);
+    height: var(--toc-h);
+    margin: 0 auto;
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.toc a {
+    display: flex;
+    align-items: center;
+    position: relative;
+    height: 100%;
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 150ms ease, transform 160ms var(--ease-out);
+}
+
+
+/* ---------- 6. Аркуш і рядки (CSS Grid) ---------- */
+
+.sheet {
+    max-width: var(--wrap);
+    margin: 2.5rem auto 0;
+    padding: 0.5rem calc(var(--gutter) - 1px);
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: var(--label-col) minmax(0, 1fr);
+    gap: 1rem 3rem;
+    padding: 2.75rem 0;
+    border-top: 1px solid var(--rule);
+}
+
+.row:first-child {
+    border-top: 0;
+}
+
+.row > h2 {
+    position: sticky;
+    top: calc(var(--toc-h) + 1.25rem);
+    align-self: start;
+    margin: -0.35rem -0.5rem 0;
+    padding: 0.1rem 0.5rem;
+    color: var(--accent);
+    font-family: var(--font-script);
+    font-size: 2.125rem;
+    font-weight: 400;
+    line-height: 1.15;
+    word-spacing: 0.12em;
+}
+
+.row__body {
+    min-width: 0;
+}
+
+.row__body > p {
+    max-width: 68ch;
+}
+
+/* Провідний рядок: мета читається першою */
+#objective .row__body > p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+}
+
+
+/* ---------- 7. Вміст розділів ---------- */
+
+/* Навички: сітка з тонкими лініями, без карток */
+.skills {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 3rem;
+}
+
+.skill-group h3 {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--rule);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.skill-group li,
+.langs li {
+    position: relative;
+}
+
+.skill-group li {
+    padding-left: 1.15rem;
+    color: var(--ink-2);
+    font-size: 1rem;
+}
+
+.skill-group li + li {
+    margin-top: 0.55rem;
+}
+
+.skill-group li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--brass);
+    -webkit-mask: var(--leaf) center / contain no-repeat;
+    mask: var(--leaf) center / contain no-repeat;
+}
+
+.skill-group strong {
+    color: var(--ink);
+}
+
+/* Освіта */
+.school h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+.school h3 a {
+    color: var(--ink);
+}
+
+.school__period {
+    margin-top: 0.35rem;
+    color: var(--ink-2);
+    font-family: var(--font-data);
+    font-size: 0.875rem;
+}
+
+.facts {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: 0;
+    margin-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+}
+
+.facts > div {
+    display: contents;
+}
+
+.facts dt,
+.facts dd {
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.facts dt {
+    padding-right: 2rem;
+    color: var(--ink-2);
+}
+
+/* Сертифікації: рік — назва — організація */
+.timeline li {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--rule);
+}
+
+.timeline li:first-child {
+    border-top: 1px solid var(--rule);
+}
+
+.timeline time {
+    color: var(--accent);
+    font-family: var(--font-data);
+    font-size: 0.9375rem;
+    font-weight: 500;
+}
+
+.org {
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+}
+
+/* Мови */
+.langs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 2.5rem;
+}
+
+.langs li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.level {
+    padding: 0.05rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    color: var(--ink-2);
+    font-family: var(--font-data);
+    font-size: 0.8125rem;
+    font-weight: 400;
+}
+
+
+/* ---------- 8. Підвал ---------- */
+
+.closing__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    max-width: var(--wrap);
+    margin: 0 auto;
+    padding: 4.5rem var(--gutter) 3rem;
+}
+
+.signature {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.25rem;
+    margin-bottom: 1.25rem;
+    color: var(--accent);
+    font-family: var(--font-script);
+    font-size: clamp(2.5rem, 4vw + 1rem, 3.75rem);
+    line-height: 1;
+    word-spacing: 0.12em;
+}
+
+.signature__sprig {
+    width: 4.5rem;
+    height: auto;
+    color: var(--accent-2);
+    transform: translateY(-0.4em) scaleX(-1);
+}
+
+.closing__lead {
+    color: var(--ink-2);
+}
+
+.contact-link {
+    display: inline-block;
+    color: var(--ink);
+    font-size: clamp(1.5rem, 3vw + 0.75rem, 2.75rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+    text-decoration-color: var(--accent);
+    transition: color 150ms ease, transform 160ms var(--ease-out);
+}
+
+.contact-link--quiet {
+    font-family: var(--font-data);
+    font-size: 1.0625rem;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-decoration-thickness: 1px;
+    text-decoration-color: var(--rule);
+}
+
+.closing__copy {
+    margin-top: 3rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--rule);
+    align-self: stretch;
+    color: var(--ink-2);
+    font-size: 0.875rem;
+}
+
+
+/* ---------- 9. Стани та поверхні браузера ---------- */
+
+/* Селектори атрибутів для типів посилань */
+a[href^="tel:"] {
+    font-family: var(--font-data);
+    font-size: 0.95em;
+    font-variant-numeric: tabular-nums;
+}
+
+a[href^="http"]::after {
+    content: "";
+    display: inline-block;
+    width: 0.7em;
+    height: 0.7em;
+    margin-left: 0.3em;
+    background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 17 17 7M8 7h9v9'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* :hover — лише на пристроях із точним вказівником */
+@media (hover: hover) and (pointer: fine) {
+    a:hover {
+        color: var(--accent-ink);
+        text-decoration-color: currentColor;
+    }
+
+    .masthead a:hover {
+        color: #fff;
+    }
+
+    .toc a:hover {
+        color: var(--ink);
+    }
+
+    .contact-link:hover {
+        color: var(--accent);
+    }
+}
+
+/* :focus-visible — помітне кільце для клавіатури */
+a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+.masthead a:focus-visible {
+    outline-color: #fff;
+}
+
+.toc a:focus-visible {
+    outline-offset: -2px;
+}
+
+/* :active — відгук на натискання */
+.contact-link:active {
+    transform: scale(0.97);
+}
+
+/* :target — підсвітка розділу, до якого перейшли зі змісту */
+
+.row:target {
+    border-top-color: var(--accent);
+}
+
+.row:target > h2 {
+    color: var(--accent-ink);
+    animation: cue 1.4s var(--ease-out);
+}
+
+@keyframes cue {
+    from {
+        background-color: var(--accent-wash);
+    }
+
+    to {
+        background-color: transparent;
+    }
+}
+
+::selection {
+    background: var(--accent);
+    color: #fff;
+}
+
+html {
+    scrollbar-color: #9aaa9f var(--paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .row:target > h2 {
+        animation: none;
+    }
+
+    .contact-link:active {
+        transform: none;
+    }
+}
+
+
+
+/* ---------- 9a. Живі анімації: паростки та лоза ---------- */
+
+/* Зміст: з-під пункту проростає стебло з листком на кінці */
+.toc a::after,
+.toc a::before {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.toc a::after {
+    left: 0;
+    right: 0.55rem;
+    bottom: 0.7rem;
+    height: 1.5px;
+    border-radius: 1px;
+    background: var(--accent-2);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 160ms ease;
+}
+
+.toc a::before {
+    right: 0;
+    bottom: 0.7rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    background: var(--accent-2);
+    -webkit-mask: var(--leaf) center / contain no-repeat;
+    mask: var(--leaf) center / contain no-repeat;
+    opacity: 0;
+    transform: scale(0.4) rotate(-35deg);
+    transform-origin: 0% 100%;
+    transition: opacity 120ms ease, transform 160ms ease;
+}
+
+/* Лоза під e-mail: стебло малюється, листки розкриваються по черзі */
+.contact-link--vine {
+    position: relative;
+    margin-bottom: 0.7em;
+    transition: color 150ms ease, text-decoration-color 200ms ease, transform 160ms var(--ease-out);
+}
+
+.vine {
+    position: absolute;
+    left: 0;
+    top: calc(100% - 0.2em);
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.vine__stem,
+.vine__tendril {
+    fill: none;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 180ms ease;
+}
+
+.vine__stem {
+    stroke: var(--accent-2);
+    stroke-width: 1.6;
+}
+
+.vine__tendril {
+    stroke: var(--brass);
+    stroke-width: 1.1;
+}
+
+.vine__leaf {
+    fill: var(--accent-2);
+    opacity: 0;
+    transform: scale(0.3) rotate(-25deg);
+    transform-box: fill-box;
+    transition: opacity 120ms ease, transform 180ms ease;
+}
+
+.vine__leaf--up {
+    transform-origin: 0% 100%;
+}
+
+.vine__leaf--down {
+    transform-origin: 0% 0%;
+    transform: scale(0.3) rotate(25deg);
+}
+
+/* Телефон: поруч розпускається один латунний листок */
+.contact-link--quiet::after {
+    content: "";
+    display: inline-block;
+    width: 0.85em;
+    height: 0.85em;
+    margin-left: 0.4em;
+    background: var(--brass);
+    -webkit-mask: var(--leaf) center / contain no-repeat;
+    mask: var(--leaf) center / contain no-repeat;
+    opacity: 0;
+    transform: scale(0.3) rotate(-40deg);
+    transform-origin: 0% 100%;
+    transition: opacity 120ms ease, transform 160ms ease;
+}
+
+/* Затримки: листок розкривається, коли до нього доросте стебло */
+.vine__leaf:nth-of-type(6) { --d: 60ms; }
+.vine__leaf:nth-of-type(7) { --d: 115ms; }
+.vine__leaf:nth-of-type(8) { --d: 170ms; }
+.vine__leaf:nth-of-type(9) { --d: 225ms; }
+.vine__leaf:nth-of-type(10) { --d: 280ms; }
+.vine__leaf:nth-of-type(11) { --d: 335ms; }
+.vine__leaf:nth-of-type(12) { --d: 390ms; }
+.vine__leaf:nth-of-type(13) { --d: 445ms; }
+.vine__leaf:nth-of-type(14) { --d: 500ms; }
+.vine__leaf:nth-of-type(15) { --d: 555ms; }
+.vine__leaf:nth-of-type(16) { --d: 610ms; }
+.vine__tendril:nth-of-type(2) { --d: 255ms; }
+.vine__tendril:nth-of-type(3) { --d: 420ms; }
+.vine__tendril:nth-of-type(4) { --d: 585ms; }
+.vine__tendril:nth-of-type(5) { --d: 750ms; }
+
+/* Стан «виросло»: наведення на точних пристроях */
+@media (hover: hover) and (pointer: fine) {
+    .toc a:hover::after {
+        transform: scaleX(1);
+        transition: transform 280ms var(--ease-out);
+    }
+
+    .toc a:hover::before {
+        opacity: 1;
+        transform: none;
+        transition: opacity 160ms ease 180ms, transform 380ms var(--ease-grow) 180ms;
+    }
+
+    .contact-link--vine:hover {
+        text-decoration-color: transparent;
+    }
+
+    .contact-link--vine:hover .vine__stem {
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 720ms cubic-bezier(0.45, 0.05, 0.3, 1);
+    }
+
+    .contact-link--vine:hover .vine__tendril {
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 420ms var(--ease-out) var(--d, 300ms);
+    }
+
+    .contact-link--vine:hover .vine__leaf {
+        opacity: 1;
+        transform: none;
+        transition: opacity 160ms ease var(--d, 0ms), transform 420ms var(--ease-grow) var(--d, 0ms);
+    }
+
+    .contact-link--quiet:hover::after {
+        opacity: 1;
+        transform: none;
+        transition: opacity 160ms ease, transform 380ms var(--ease-grow);
+    }
+}
+
+/* ...і фокус з клавіатури */
+.toc a:focus-visible::after {
+    transform: scaleX(1);
+    transition: transform 280ms var(--ease-out);
+}
+
+.toc a:focus-visible::before {
+    opacity: 1;
+    transform: none;
+    transition: opacity 160ms ease 180ms, transform 380ms var(--ease-grow) 180ms;
+}
+
+.contact-link--vine:focus-visible {
+    text-decoration-color: transparent;
+}
+
+.contact-link--vine:focus-visible .vine__stem {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 720ms cubic-bezier(0.45, 0.05, 0.3, 1);
+}
+
+.contact-link--vine:focus-visible .vine__tendril {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 420ms var(--ease-out) var(--d, 300ms);
+}
+
+.contact-link--vine:focus-visible .vine__leaf {
+    opacity: 1;
+    transform: none;
+    transition: opacity 160ms ease var(--d, 0ms), transform 420ms var(--ease-grow) var(--d, 0ms);
+}
+
+.contact-link--quiet:focus-visible::after {
+    opacity: 1;
+    transform: none;
+    transition: opacity 160ms ease, transform 380ms var(--ease-grow);
+}
+
+.toc a:active {
+    transform: scale(0.97);
+}
+
+/* Менше руху: лоза просто проявляється, без росту */
+@media (prefers-reduced-motion: reduce) {
+    .toc a::after,
+    .toc a::before,
+    .vine__stem,
+    .vine__tendril,
+    .vine__leaf,
+    .contact-link--quiet::after {
+        transform: none !important;
+        stroke-dashoffset: 0 !important;
+        transition: opacity 200ms ease !important;
+    }
+
+    .toc a::after {
+        opacity: 0;
+    }
+
+    .toc a:is(:hover, :focus-visible)::after {
+        opacity: 1;
+    }
+
+    .vine {
+        opacity: 0;
+        transition: opacity 200ms ease;
+    }
+
+    .contact-link--vine:is(:hover, :focus-visible) .vine {
+        opacity: 1;
+    }
+
+    .toc a:active {
+        transform: none;
+    }
+}
+
+/* ---------- 10. Адаптивність ---------- */
+
+/* Планшети: шапка в одну колонку */
+@media (max-width: 60rem) {
+    .masthead__inner {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            "identity"
+            "meta"
+            "stack";
+        gap: 2rem;
+    }
+
+    .meta dl {
+        grid-template-columns: max-content minmax(0, 1fr);
+    }
+}
+
+/* Вузькі екрани: рядки розділів стають однією колонкою */
+@media (max-width: 48rem) {
+    :root {
+        --toc-h: 3rem;
+    }
+
+    .stack {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .sheet {
+        margin-top: 0;
+        border-width: 0 0 1px;
+    }
+
+    .row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+        padding: 2.25rem 0;
+    }
+
+    .row > h2 {
+        position: static;
+        font-size: 2rem;
+    }
+
+    .masthead__fern {
+        right: -6rem;
+        height: 70%;
+        opacity: 0.2;
+    }
+
+    #objective .row__body > p {
+        font-size: 1.125rem;
+    }
+
+    .skills {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2rem;
+    }
+
+    .timeline li {
+        grid-template-columns: 3.5rem minmax(0, 1fr);
+        row-gap: 0;
+    }
+
+    .timeline .org {
+        grid-column: 2;
+    }
+
+    .toc ul {
+        gap: 1.25rem;
+        -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+        mask-image: linear-gradient(to right, #000 85%, transparent);
+    }
+}

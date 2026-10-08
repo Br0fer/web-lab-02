@@ -1,8 +1,9 @@
+import Section from "./Section.jsx";
+
 function Objective() {
   return (
-    <section id="objective">
-      <h2>Мета</h2>
-      <p>
+    <Section id="objective" cmd="cat" arg={`"Мета"`} title="Мета">
+      <p className="max-w-[72ch] text-base leading-relaxed text-term md:text-lg md:leading-relaxed">
         Вмотивований початківець у сфері IT та розробки програмного забезпечення
         зі стійкою базою у програмуванні (Python, JS), системному
         адмініструванні Linux/Windows та комп'ютерних мережах. Прагну
@@ -10,7 +11,7 @@ function Objective() {
         для вирішення практичних завдань команди, швидкої адаптації до нових
         технологій і професійного зростання.
       </p>
-    </section>
+    </Section>
   );
 }
 
