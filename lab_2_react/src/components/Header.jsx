@@ -69,7 +69,7 @@ function Header() {
         </p>
 
         <div className="animate-reveal motion-reduce:animate-none">
-          <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-phosphor [text-shadow:0_0_22px_rgb(61_255_122/0.35)] sm:text-5xl lg:text-6xl">
+          <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-phosphor [text-shadow:0_0_22px_rgb(61_255_122/0.35)] light:[text-shadow:none] sm:text-5xl lg:text-6xl">
             Шаповалов Тарас
             <span
               aria-hidden="true"

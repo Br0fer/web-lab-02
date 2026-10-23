@@ -15,6 +15,10 @@
     <!-- Зовнішній спосіб: основна частина правил -->
     <link rel="stylesheet" href="styles.css">
 
+    <!-- Лабораторна №4: скрипт підключено в head без defer, щоб тема
+         встановилась до першого малювання сторінки (без «спалаху») -->
+    <script src="script.js"></script>
+
     <!-- Внутрішній спосіб: стилі лише для друку -->
     <style>
         @media print {
@@ -93,6 +97,13 @@
             <li><a href="#certifications">Сертифікації</a></li>
             <li><a href="#languages">Іноземні мови</a></li>
             <li><a href="#additional">Додатково</a></li>
+            <li><a href="#reviews">Відгуки</a></li>
+            <li class="toc__theme">
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">
+                    <span class="theme-toggle__icon" aria-hidden="true"></span>
+                    <span class="theme-toggle__label">Нічна тема</span>
+                </button>
+            </li>
         </ul>
     </nav>
 
@@ -223,6 +234,15 @@
                 </p>
             </div>
         </section>
+
+        <section id="reviews" class="row">
+            <h2>Відгуки роботодавців</h2>
+            <div class="row__body">
+                <!-- Наповнюється з JSONPlaceholder у script.js -->
+                <p class="reviews__status" id="reviews-status" role="status">Завантаження відгуків…</p>
+                <ol class="reviews" id="reviews-list"></ol>
+            </div>
+        </section>
     </main>
 
     <footer class="closing">
@@ -231,9 +251,46 @@
             <p class="closing__lead">Зв'язатися зі мною:</p>
             <a class="contact-link contact-link--vine" href="mailto:tarik.shap@gmail.com">tarik.shap@gmail.com<svg class="vine" viewBox="0 0 462 44" aria-hidden="true" focusable="false"><path class="vine__stem" pathLength="1" d="M2.0 17.0 L8.0 18.0 L14.0 18.4 L20.0 18.1 L26.0 17.1 L32.0 15.5 L38.0 13.8 L44.0 12.0 L50.0 10.6 L56.0 9.8 L62.0 9.6 L68.0 10.2 L74.0 11.4 L80.0 13.0 L86.0 14.8 L92.0 16.5 L98.0 17.7 L104.0 18.3 L110.0 18.3 L116.0 17.5 L122.0 16.1 L128.0 14.4 L134.0 12.6 L140.0 11.0 L146.0 10.0 L152.0 9.6 L158.0 9.9 L164.0 10.9 L170.0 12.5 L176.0 14.2 L182.0 16.0 L188.0 17.4 L194.0 18.2 L200.0 18.4 L206.0 17.8 L212.0 16.6 L218.0 15.0 L224.0 13.2 L230.0 11.5 L236.0 10.3 L242.0 9.7 L248.0 9.7 L254.0 10.5 L260.0 11.9 L266.0 13.6 L272.0 15.4 L278.0 17.0 L284.0 18.0 L290.0 18.4 L296.0 18.1 L302.0 17.1 L308.0 15.5 L314.0 13.8 L320.0 12.0 L326.0 10.6 L332.0 9.8 L338.0 9.6 L344.0 10.2 L350.0 11.4 L356.0 13.0 L362.0 14.8 L368.0 16.5 L374.0 17.7 L380.0 18.3 L386.0 18.3 L392.0 17.5 L398.0 16.1 L404.0 14.4 L410.0 12.6 L416.0 11.0 L422.0 10.0 L428.0 9.6 L434.0 9.9 L440.0 10.9 L446.0 12.5 L452.0 14.2"/><path class="vine__tendril" pathLength="1" d="M76.0 9.4 L76.9 9.2 L77.7 8.9 L78.4 8.6 L79.1 8.3 L79.7 7.9 L80.3 7.5 L80.8 7.0 L81.1 6.6 L81.4 6.1 L81.6 5.6 L81.8 5.1 L81.8 4.6 L81.8 4.2 L81.7 3.7 L81.5 3.3 L81.3 2.9 L81.0 2.5 L80.6 2.1 L80.3 1.8 L79.8 1.5 L79.4 1.3 L79.0 1.1 L78.5 0.9 L78.1 0.8 L77.6 0.7 L77.2 0.6 L76.8 0.6 L76.4 0.6 L76.1 0.6 L75.7 0.7 L75.5 0.7 L75.3 0.8 L75.1 0.9 L75.0 1.0 L74.9 1.0 L74.8 1.1 L74.8 1.2 L74.9 1.3 L75.0 1.3"/><path class="vine__tendril" pathLength="1" d="M190.0 16.8 L190.9 17.0 L191.7 17.2 L192.4 17.5 L193.1 17.9 L193.7 18.3 L194.3 18.7 L194.8 19.2 L195.1 19.6 L195.4 20.1 L195.6 20.6 L195.8 21.1 L195.8 21.6 L195.8 22.0 L195.7 22.5 L195.5 22.9 L195.3 23.3 L195.0 23.7 L194.6 24.1 L194.3 24.4 L193.8 24.6 L193.4 24.9 L193.0 25.1 L192.5 25.3 L192.1 25.4 L191.6 25.5 L191.2 25.6 L190.8 25.6 L190.4 25.6 L190.1 25.6 L189.7 25.5 L189.5 25.5 L189.3 25.4 L189.1 25.3 L189.0 25.2 L188.9 25.1 L188.8 25.0 L188.8 25.0 L188.9 24.9 L189.0 24.8"/><path class="vine__tendril" pathLength="1" d="M304.0 17.3 L304.9 17.1 L305.7 16.8 L306.4 16.5 L307.1 16.1 L307.7 15.7 L308.3 15.3 L308.8 14.9 L309.1 14.4 L309.4 13.9 L309.6 13.4 L309.8 13.0 L309.8 12.5 L309.8 12.0 L309.7 11.6 L309.5 11.1 L309.3 10.7 L309.0 10.3 L308.6 10.0 L308.3 9.7 L307.8 9.4 L307.4 9.1 L307.0 8.9 L306.5 8.8 L306.1 8.6 L305.6 8.5 L305.2 8.5 L304.8 8.4 L304.4 8.4 L304.1 8.5 L303.7 8.5 L303.5 8.6 L303.3 8.6 L303.1 8.7 L303.0 8.8 L302.9 8.9 L302.8 9.0 L302.8 9.1 L302.9 9.1 L303.0 9.2"/><path class="vine__tendril" pathLength="1" d="M418.0 13.4 L418.9 13.6 L419.7 13.9 L420.4 14.2 L421.1 14.5 L421.7 14.9 L422.3 15.3 L422.8 15.8 L423.1 16.2 L423.4 16.7 L423.6 17.2 L423.8 17.7 L423.8 18.2 L423.8 18.6 L423.7 19.1 L423.5 19.5 L423.3 19.9 L423.0 20.3 L422.6 20.7 L422.3 21.0 L421.8 21.3 L421.4 21.5 L421.0 21.7 L420.5 21.9 L420.1 22.0 L419.6 22.1 L419.2 22.2 L418.8 22.2 L418.4 22.2 L418.1 22.2 L417.7 22.1 L417.5 22.1 L417.3 22.0 L417.1 21.9 L417.0 21.8 L416.9 21.8 L416.8 21.7 L416.8 21.6 L416.9 21.5 L417.0 21.5"/><path class="vine__leaf vine__leaf--up" d="M30.0 16.1Q41.1 15.5 42.4 4.5Q31.4 5.1 30.0 16.1Z"/><path class="vine__leaf vine__leaf--down" d="M68.0 10.2Q69.4 21.2 80.4 21.8Q79.1 10.8 68.0 10.2Z"/><path class="vine__leaf vine__leaf--up" d="M106.0 18.4Q117.1 17.8 118.4 6.8Q107.4 7.4 106.0 18.4Z"/><path class="vine__leaf vine__leaf--down" d="M144.0 10.3Q145.4 21.3 156.4 21.9Q155.1 10.8 144.0 10.3Z"/><path class="vine__leaf vine__leaf--up" d="M182.0 16.0Q193.1 15.4 194.4 4.4Q183.4 4.9 182.0 16.0Z"/><path class="vine__leaf vine__leaf--down" d="M220.0 14.4Q221.4 25.4 232.4 26.0Q231.1 14.9 220.0 14.4Z"/><path class="vine__leaf vine__leaf--up" d="M258.0 11.4Q269.1 10.8 270.4 -0.2Q259.4 0.4 258.0 11.4Z"/><path class="vine__leaf vine__leaf--down" d="M296.0 18.1Q297.4 29.1 308.4 29.6Q307.1 18.6 296.0 18.1Z"/><path class="vine__leaf vine__leaf--up" d="M334.0 9.7Q345.1 9.1 346.4 -1.9Q335.4 -1.4 334.0 9.7Z"/><path class="vine__leaf vine__leaf--down" d="M372.0 17.4Q373.4 28.4 384.4 29.0Q383.1 17.9 372.0 17.4Z"/><path class="vine__leaf vine__leaf--up" d="M410.0 12.6Q417.2 12.2 418.0 5.1Q410.9 5.5 410.0 12.6Z"/></svg></a>
             <a class="contact-link contact-link--quiet" href="tel:+380938576383">+380 93 857 63 83</a>
+
+            <!-- Вміст localStorage виводиться сюди зі script.js -->
+            <section class="sysinfo" aria-labelledby="sysinfo-title">
+                <h2 class="sysinfo__title" id="sysinfo-title">Ваша система <span>· дані з localStorage</span></h2>
+                <dl class="sysinfo__list" id="sysinfo-list"></dl>
+            </section>
+
             <!-- Вбудований (inline) спосіб підключення стилів -->
             <p class="closing__copy"><small style="letter-spacing: 0.04em;">&copy; 2026 Шаповалов Тарас</small></p>
         </div>
     </footer>
+
+    <!-- Форма зворотного зв'язку: відкривається через 1 хвилину на сайті -->
+    <dialog class="feedback" id="feedback" aria-labelledby="feedback-title">
+        <div class="feedback__head">
+            <h2 class="feedback__title" id="feedback-title">Напишіть мені</h2>
+            <button class="feedback__close" id="feedback-close" type="button" aria-label="Закрити форму">&times;</button>
+        </div>
+        <p class="feedback__lead">Маєте пропозицію чи питання? Лист прийде мені на пошту.</p>
+
+        <!-- Дані форми надсилає на пошту сервіс Formspree -->
+        <form class="feedback__form" action="https://formspree.io/f/mkjjnwvb" method="POST">
+            <label class="field">
+                <span class="field__label">Ім'я</span>
+                <input class="field__input" type="text" name="name" autocomplete="name" required>
+            </label>
+            <label class="field">
+                <span class="field__label">Email</span>
+                <input class="field__input" type="email" name="email" autocomplete="email" required>
+            </label>
+            <label class="field">
+                <span class="field__label">Номер телефону</span>
+                <input class="field__input" type="tel" name="phone" autocomplete="tel" placeholder="+380 __ ___ __ __">
+            </label>
+            <label class="field">
+                <span class="field__label">Повідомлення</span>
+                <textarea class="field__input" name="message" rows="5" required></textarea>
+            </label>
+            <button class="feedback__submit" type="submit">Надіслати</button>
+        </form>
+    </dialog>
 </body>
 </html>

@@ -37,4 +37,44 @@
       transform: translateY(6px);
     }
   }
+
+  --animate-pop: pop 0.24s var(--ease-snap) both;
+
+  @keyframes pop {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+  }
+}
+
+/* Варіант light: для дрібних правок, які не покриваються токенами
+   (наприклад, прибрати «світіння» тексту на світлому фоні). */
+@custom-variant light (&:where(.light, .light *));
+
+/* Денна тема (лаб. №4): клас .light на <html> ставить App.jsx.
+   Перевизначаємо ті самі токени, тож усі утиліти (bg-void, text-term…)
+   перефарбовуються без змін у компонентах. */
+@layer base {
+  :root.light {
+    --color-void: #f2f5f0;
+    --color-panel: #e7ede5;
+    --color-line: #c3d1c6;
+    --color-phosphor: #11733a;
+    --color-phosphor-deep: #4c9364;
+    --color-term: #15231a;
+    --color-dim: #546d5c;
+
+    color-scheme: light;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    transition:
+      background-color 250ms ease,
+      color 250ms ease;
+  }
 }

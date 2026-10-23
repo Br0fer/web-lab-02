@@ -7,10 +7,12 @@ const items = [
   ["certifications", "Додаткова освіта та сертифікації"],
   ["languages", "Іноземні мови"],
   ["additional", "Додаткова інформація"],
+  ["reviews", "Відгуки"],
 ];
 
 // Зміст як статус-рядок tmux: сесія [cv], вікна-розділи, активне позначене «*».
-function Toc() {
+// Праворуч — перемикач теми, як індикатор у правій частині статус-рядка.
+function Toc({ theme, onToggleTheme }) {
   const [active, setActive] = useState(null);
   const listRef = useRef(null);
 
@@ -71,6 +73,17 @@ function Toc() {
             );
           })}
         </ul>
+        <button
+          type="button"
+          onClick={onToggleTheme}
+          aria-label={theme === "dark" ? "Увімкнути денну тему" : "Увімкнути нічну тему"}
+          className="flex shrink-0 items-center gap-1.5 border-l border-void/30 px-3 font-bold whitespace-nowrap transition-[color,background-color,transform] duration-150 ease-snap hover:bg-void hover:text-phosphor focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-void active:scale-[0.97] motion-reduce:active:scale-100 sm:pr-0"
+        >
+          <span aria-hidden="true">{theme === "dark" ? "☾" : "☀"}</span>
+          <span aria-hidden="true" className="hidden sm:inline">
+            theme:{theme}
+          </span>
+        </button>
       </div>
     </nav>
   );
