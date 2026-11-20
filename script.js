@@ -14,7 +14,7 @@
 
 /* ---------- 1. Налаштування ---------- */
 
-const VARIANT = 27; // номер у журналі групи
+const VARIANT = 25; // номер у журналі групи
 const REVIEWS_URL = `https://jsonplaceholder.typicode.com/posts/${VARIANT}/comments`;
 
 const FEEDBACK_DELAY = 60 * 1000; // 1 хвилина
